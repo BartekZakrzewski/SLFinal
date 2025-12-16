@@ -130,7 +130,7 @@ class Player:
                     self.v_y = 0
         if self.v_y < 0:
             self.d_y = -1
-        if self.rect.y > self.start_pos[1] + PLAYER_JUMP_OFFSET:
+        if self.rect.y > self.start_pos[1]*2:
             self.rect.y = PLAYER_POS[1]
             self.v_y = 0
             self.on_ground = True

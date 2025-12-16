@@ -18,14 +18,11 @@ class Tile:
     def load_images(self):
         tls = pygame.image.load('./resources/images/world_tileset.png').convert_alpha()
         tw, th = tls.get_size()
-        i = 1
         for y in range(0, th, TPS):
-            i = 1
             for x in range(0, tw, TPS):
                 rect = pygame.Rect(x, y, TPS, TPS)
                 ct = tls.subsurface(rect)
                 self.tiles.append(ct)
-                i += 1
 
 
     def update(self, world_x):

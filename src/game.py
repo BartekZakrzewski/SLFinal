@@ -4,6 +4,7 @@ import subprocess
 import random as ran
 from src.components.player import Player
 from src.components.tile import Tile
+from src.components.enemy import Enemy
 from resources.chunks import chunks
 from src.settings import SCREEN_SIZE, TILE_SIZE, CHUNK_BRAKEPOINT, SCORE_OFFSET_X, STEP_X, TICK
 
@@ -14,6 +15,7 @@ class Game:
         self.running = False
         self.clock = pygame.time.Clock()
         self.w_offset_x = 0
+        self.enemies = []
         self.init_player()
         self.init_level()
         self.world_x = 0
@@ -40,6 +42,8 @@ class Game:
                             break
                 elif t == 'X':
                     chunk_tiles.append(Tile((TILE_SIZE, TILE_SIZE), ((TILE_SIZE * x + self.w_offset_x), (SCREEN_SIZE[1] - TILE_SIZE * y)), 'platform'))
+                elif t == 'E':
+                    self.enemies.append(Enemy((TILE_SIZE, TILE_SIZE), ((TILE_SIZE * x + self.w_offset_x), (SCREEN_SIZE[1] - TILE_SIZE*y))))
 
         # TODO Enemies
 
@@ -49,6 +53,8 @@ class Game:
     def init_level(self):
         self.tiles = []
         for chunk in self.generate_chunk(0):
+            self.tiles.append(chunk)
+        for chunk in self.generate_chunk(4):
             self.tiles.append(chunk)
 
     def update_chunks(self):
@@ -86,6 +92,10 @@ class Game:
         for tile in self.tiles:
             tile.update(self.world_x)
             tile.draw(self.screen)
+
+        for enemy in self.enemies:
+            enemy.update(self.world_x, self.tiles)
+            enemy.draw(self.screen)
 
         self.update_score()
         self.draw_score()
