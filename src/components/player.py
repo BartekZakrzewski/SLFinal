@@ -1,17 +1,16 @@
 import pygame
 from src.settings import PLAYER_SIZE, PLAYER_POS, V_X, V_Y, PLAYER_ANIMATION_SPEED, PTS, SCREEN_SIZE, PLAYER_RBP, PLAYER_LBP, PLAYER_JUMP_OFFSET
 
-# TODO Create settings with screen size
+
 class Player:
     def __init__(self, screen):
+        # Init variables
         self.screen = screen
         self.size = PLAYER_SIZE
         self.start_pos = PLAYER_POS
         self.rect = pygame.Rect(*self.start_pos, *self.size)
 
-        self.surface = pygame.Surface(self.size)
-        self.image = pygame.image.load('./resources/images/player.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, self.size)
+        # Images
         self.tiles = []
         self.load_tiles()
         self.run_frames = [pygame.transform.scale(self.tiles[0], self.size), pygame.transform.scale(self.tiles[1], self.size)]
@@ -22,19 +21,23 @@ class Player:
             si = pygame.transform.scale(ti, self.size)
             self.run_frames.append(si)
 
+        # Game loop variables
         self.on_ground = True
+        self.is_alive = True
 
         self.v_y = 0
         self.d_y = 1
 
         self.v_x = V_X
-        print(self.v_x, V_X)
+
+        self.distance_x = 0
 
         self.world_x = 0
         self.frame_index = 0
         self.animation_speed = PLAYER_ANIMATION_SPEED
         self.image = self.run_frames[0] 
         self.facing_right = True
+
 
     def load_tiles(self):
         tileset = pygame.image.load('./resources/images/knight.png')
@@ -45,17 +48,17 @@ class Player:
                 ct = tileset.subsurface(rect)
                 self.tiles.append(ct)
 
-    def update(self, keys, tiles):
+    def update(self, keys, tiles, enemies, coins):
         # Movement
         prev = self.rect.x
-        moving = False
+        self.moving = False
         if keys[pygame.K_d] or keys[pygame.K_RIGHT]: 
             # Move right
             self.rect.x += self.v_x
 
             # Animation right
             self.facing_right = True
-            moving = True
+            self.moving = True
             self.frame_index += self.animation_speed
             if self.on_ground:
                 self.image = self.run_frames[int(self.frame_index) % 2]
@@ -65,7 +68,7 @@ class Player:
 
             # Animation left
             self.facing_right = False
-            moving = True
+            self.moving = True
             self.frame_index += self.animation_speed
             cf = self.run_frames[int(self.frame_index) % 2]
             if self.on_ground:
@@ -94,11 +97,22 @@ class Player:
             if self.rect.colliderect(tile.rect):
                 if prev < self.rect.x:
                     self.rect.right = tile.rect.left
+                    self.moving = False
                 if prev > self.rect.x:
                     self.rect.left = tile.rect.right
-                
+                    self.moving = False
 
-        self.jump(tiles)
+        for enemy in enemies:
+            if self.rect.colliderect(enemy.rect) and enemy.is_alive:
+                if self.on_ground:
+                    self.is_alive = False
+
+        for coin in coins:
+            if self.rect.colliderect(coin.rect) and coin.is_alive:
+                coin.on_death()
+
+        self.jump(tiles, enemies)
+
         # Scroll
         if self.rect.x > PLAYER_RBP*SCREEN_SIZE[0]: # 50% Screen Width
             self.world_x = self.rect.x - prev
@@ -109,9 +123,11 @@ class Player:
         else:
             self.world_x = 0
 
-        
+        if prev < self.rect.x and self.rect.x:
+            self.distance_x += self.rect.x - prev
 
-    def jump(self, tiles):
+
+    def jump(self, tiles, enemies):
         prev = self.rect.y
         dg = False
         self.rect.y -= (1 / 2) * self.d_y * (self.v_y ** 2) # <- F = (m*v^2)/2
@@ -128,6 +144,17 @@ class Player:
                     self.rect.top = tile.rect.bottom
                     self.d_y = -1
                     self.v_y = 0
+        for i, enemy in enumerate(enemies):
+            if self.rect.colliderect(enemy.rect) and enemy.is_alive:
+                if prev < self.rect.y:
+                    self.rect.bottom = enemy.rect.top
+                    self.on_ground = False
+                    self.v_y = V_Y // 2
+                    self.d_y = 1
+                    enemy.on_death()
+                if prev > self.rect.y:
+                    self.is_alive = False
+                    
         if self.v_y < 0:
             self.d_y = -1
         if self.rect.y > self.start_pos[1]*2:
