@@ -49,8 +49,10 @@ class Coin:
         if not self.is_alive:
             self.rect.y -= self.v_y
 
-    def draw(self, screen):
+    def draw(self, screen, font):
         imgw = 0
         if not self.is_alive:
             imgw, _ = self.image.get_size()
+            plus_text = font.render("+10", False, 'black')
+            screen.blit(plus_text, (self.rect.x, self.rect.y - 40 - int(self.frame_index) * 5))
         screen.blit(self.image, (self.rect.x - imgw // 8, self.rect.y))

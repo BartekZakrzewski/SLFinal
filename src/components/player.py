@@ -10,6 +10,11 @@ class Player:
         self.start_pos = PLAYER_POS
         self.rect = pygame.Rect(*self.start_pos, *self.size)
 
+        # Sounds
+        self.jump_sound = pygame.mixer.Sound('./resources/sounds/jump.wav')
+        self.coin_sound = pygame.mixer.Sound('./resources/sounds/coin.wav')
+        self.enemy_sound = pygame.mixer.Sound('./resources/sounds/power_up.wav')
+
         # Images
         self.tiles = []
         self.load_tiles()
@@ -24,13 +29,16 @@ class Player:
         # Game loop variables
         self.on_ground = True
         self.is_alive = True
+        self.kills = 0
+        self.coins = 0
 
         self.v_y = 0
         self.d_y = 1
 
         self.v_x = V_X
 
-        self.distance_x = 0
+        self.distance_x = self.start_pos[0]
+        self.position_x = self.start_pos[0]
 
         self.world_x = 0
         self.frame_index = 0
@@ -48,7 +56,7 @@ class Player:
                 ct = tileset.subsurface(rect)
                 self.tiles.append(ct)
 
-    def update(self, keys, tiles, enemies, coins):
+    def update(self, keys, tiles, enemies, coins, spikes):
         # Movement
         prev = self.rect.x
         self.moving = False
@@ -75,6 +83,7 @@ class Player:
                 self.image = pygame.transform.flip(cf, True, False)
         if (keys[pygame.K_SPACE] or keys[pygame.K_w] or keys[pygame.K_UP]) and self.on_ground:
             # Jump
+            self.jump_sound.play()
             self.on_ground = False
             self.v_y = V_Y
 
@@ -106,12 +115,22 @@ class Player:
             if self.rect.colliderect(enemy.rect) and enemy.is_alive:
                 if self.on_ground:
                     self.is_alive = False
+                    self.rect.bottom = enemy.rect.bottom
+                    enemy.image = enemy.player_frame
 
         for coin in coins:
             if self.rect.colliderect(coin.rect) and coin.is_alive:
                 coin.on_death()
+                self.coins += 1
+                self.coin_sound.play()
 
-        self.jump(tiles, enemies)
+        for spike in spikes:
+            if self.rect.colliderect(spike.rect):
+                self.is_alive = False
+                self.rect.bottom = spike.rect.top + 10
+
+        if self.is_alive:
+            self.jump(tiles, enemies)
 
         # Scroll
         if self.rect.x > PLAYER_RBP*SCREEN_SIZE[0]: # 50% Screen Width
@@ -123,8 +142,9 @@ class Player:
         else:
             self.world_x = 0
 
-        if prev < self.rect.x and self.rect.x:
-            self.distance_x += self.rect.x - prev
+        self.position_x += self.rect.x - prev
+        self.position_x += self.world_x
+        self.distance_x = max(self.distance_x, self.position_x)
 
 
     def jump(self, tiles, enemies):
@@ -152,8 +172,12 @@ class Player:
                     self.v_y = V_Y // 2
                     self.d_y = 1
                     enemy.on_death()
+                    self.enemy_sound.play()
+                    self.kills += 1
                 if prev > self.rect.y:
                     self.is_alive = False
+                    enemy.image = enemy.player_frame
+                    self.rect.bottom = enemy.rect.bottom
                     
         if self.v_y < 0:
             self.d_y = -1
