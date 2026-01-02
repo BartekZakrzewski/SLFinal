@@ -8,11 +8,21 @@ class Spike:
         self.pos = pos
 
         self.rect = pygame.Rect(*self.pos, *self.size)
+        self.tile = pygame.Rect(*self.pos, *self.size)
+
+        self.v_y = 2
+        self.d_y = 1
 
         self.frames = []
         self.load_images()
         self.frames = [pygame.transform.scale(t, self.size) for t in self.frames]
-        self.image = self.frames[10] # 150
+        self.image = self.frames[33] # 150
+
+        # Spike
+        tls = pygame.image.load('./resources/images/spike.png').convert_alpha()
+        ptr = tls.get_bounding_rect()
+        pti = tls.subsurface(ptr)
+        self.spike = pygame.transform.scale(pti, self.size) 
 
     def load_images(self):
         tls = pygame.image.load('./resources/images/world_tileset.png').convert_alpha()
@@ -26,6 +36,14 @@ class Spike:
     def update(self, world_x):
         self.world_x = world_x
         self.rect.x -= self.world_x
+        self.tile.x -= self.world_x
+
+
+        if abs(self.rect.y - self.pos[1]) // self.size[1] >= 1:
+            self.d_y *= -1
+
+        self.rect.y += self.d_y * self.v_y
 
     def draw(self, screen):
-        screen.blit(self.image, (self.rect.x, self.rect.y))
+        screen.blit(self.spike, (self.rect.x, self.rect.y))
+        screen.blit(self.image, (self.tile.x, self.tile.y))

@@ -111,6 +111,15 @@ class Player:
                     self.rect.left = tile.rect.right
                     self.moving = False
 
+        for spike in spikes:
+            if self.rect.colliderect(spike.tile):
+                if prev < self.rect.x:
+                    self.right = spike.tile.left
+                    self.moving = False
+                if prev > self.rect.x:
+                    self.rect.left = spike.tile.right
+                    self.moving = False
+
         for enemy in enemies:
             if self.rect.colliderect(enemy.rect) and enemy.is_alive:
                 if self.on_ground:
@@ -130,7 +139,7 @@ class Player:
                 self.rect.bottom = spike.rect.top + 10
 
         if self.is_alive:
-            self.jump(tiles, enemies)
+            self.jump(tiles, enemies, spikes)
 
         # Scroll
         if self.rect.x > PLAYER_RBP*SCREEN_SIZE[0]: # 50% Screen Width
@@ -147,7 +156,7 @@ class Player:
         self.distance_x = max(self.distance_x, self.position_x)
 
 
-    def jump(self, tiles, enemies):
+    def jump(self, tiles, enemies, spikes):
         prev = self.rect.y
         dg = False
         self.rect.y -= (1 / 2) * self.d_y * (self.v_y ** 2) # <- F = (m*v^2)/2
@@ -162,6 +171,18 @@ class Player:
                     self.d_y = 1
                 if prev > self.rect.y and not self.on_ground:
                     self.rect.top = tile.rect.bottom
+                    self.d_y = -1
+                    self.v_y = 0
+        for spike in spikes:
+            if self.rect.colliderect(spike.tile):
+                if prev < self.rect.y:
+                    self.rect.bottom = spike.tile.top
+                    self.on_ground = True
+                    dg = True
+                    self.v_y = 0
+                    self.d_y = 1
+                if prev > self.rect.y and not self.on_ground:
+                    self.rect.top = spike.tile.bottom
                     self.d_y = -1
                     self.v_y = 0
         for i, enemy in enumerate(enemies):
