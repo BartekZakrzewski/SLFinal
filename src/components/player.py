@@ -1,5 +1,7 @@
 import pygame
-from src.settings import PLAYER_SIZE, PLAYER_POS, V_X, V_Y, PLAYER_ANIMATION_SPEED, PTS, SCREEN_SIZE, PLAYER_RBP, PLAYER_LBP, PLAYER_JUMP_OFFSET
+from src.settings import (PLAYER_SIZE, PLAYER_POS,
+                          V_X, V_Y, PLAYER_ANIMATION_SPEED, PTS, SCREEN_SIZE,
+                          PLAYER_RBP, PLAYER_LBP)
 
 
 class Player:
@@ -11,14 +13,20 @@ class Player:
         self.rect = pygame.Rect(*self.start_pos, *self.size)
 
         # Sounds
-        self.jump_sound = pygame.mixer.Sound('./resources/sounds/jump.wav')
-        self.coin_sound = pygame.mixer.Sound('./resources/sounds/coin.wav')
-        self.enemy_sound = pygame.mixer.Sound('./resources/sounds/power_up.wav')
+        self.jump_sound = pygame.mixer.Sound(
+            './resources/sounds/jump.wav'
+        )
+        self.coin_sound = pygame.mixer.Sound(
+            './resources/sounds/coin.wav'
+        )
+        self.enemy_sound = pygame.mixer.Sound(
+            './resources/sounds/power_up.wav'
+        )
 
         # Images
         self.tiles = []
         self.load_tiles()
-        self.run_frames = [pygame.transform.scale(self.tiles[0], self.size), pygame.transform.scale(self.tiles[1], self.size)]
+        self.run_frames = self.runFramesHlp(self.tiles, self.size)
         self.run_frames = []
         for of in self.tiles[:2]:
             tr = of.get_bounding_rect()
@@ -43,9 +51,12 @@ class Player:
         self.world_x = 0
         self.frame_index = 0
         self.animation_speed = PLAYER_ANIMATION_SPEED
-        self.image = self.run_frames[0] 
+        self.image = self.run_frames[0]
         self.facing_right = True
 
+    def runFramesHlp(self, tiles, size):
+        return [pygame.transform.scale(tiles[0], size),
+                pygame.transform.scale(tiles[1], size)]
 
     def load_tiles(self):
         tileset = pygame.image.load('./resources/images/knight.png')
@@ -60,7 +71,7 @@ class Player:
         # Movement
         prev = self.rect.x
         self.moving = False
-        if keys[pygame.K_d] or keys[pygame.K_RIGHT]: 
+        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             # Move right
             self.rect.x += self.v_x
 
@@ -70,7 +81,7 @@ class Player:
             self.frame_index += self.animation_speed
             if self.on_ground:
                 self.image = self.run_frames[int(self.frame_index) % 2]
-        if keys[pygame.K_a] or keys[pygame.K_LEFT]: 
+        if keys[pygame.K_a] or keys[pygame.K_LEFT]:
             # Move left
             self.rect.x -= self.v_x
 
@@ -81,7 +92,8 @@ class Player:
             cf = self.run_frames[int(self.frame_index) % 2]
             if self.on_ground:
                 self.image = pygame.transform.flip(cf, True, False)
-        if (keys[pygame.K_SPACE] or keys[pygame.K_w] or keys[pygame.K_UP]) and self.on_ground:
+        jmpks = keys[pygame.K_SPACE] or keys[pygame.K_w] or keys[pygame.K_UP]
+        if jmpks and self.on_ground:
             # Jump
             self.jump_sound.play()
             self.on_ground = False
@@ -96,7 +108,7 @@ class Player:
             self.image = jimg
 
         # Borders
-        if self.rect.right > SCREEN_SIZE[0]: # SCREEN WIDTH
+        if self.rect.right > SCREEN_SIZE[0]:
             self.rect.x = SCREEN_SIZE[0] - self.size[0]
         if self.rect.left < 0:
             self.rect.x = 0
@@ -142,10 +154,10 @@ class Player:
             self.jump(tiles, enemies, spikes)
 
         # Scroll
-        if self.rect.x > PLAYER_RBP*SCREEN_SIZE[0]: # 50% Screen Width
+        if self.rect.x > PLAYER_RBP*SCREEN_SIZE[0]:  # 50% Screen Width
             self.world_x = self.rect.x - prev
             self.rect.x = prev
-        elif self.rect.x < PLAYER_LBP*SCREEN_SIZE[0]: # 10% Screen Width
+        elif self.rect.x < PLAYER_LBP*SCREEN_SIZE[0]:  # 10% Screen Width
             self.world_x = 0
             self.rect.x = prev
         else:
@@ -155,11 +167,10 @@ class Player:
         self.position_x += self.world_x
         self.distance_x = max(self.distance_x, self.position_x)
 
-
     def jump(self, tiles, enemies, spikes):
         prev = self.rect.y
         dg = False
-        self.rect.y -= (1 / 2) * self.d_y * (self.v_y ** 2) # <- F = (m*v^2)/2
+        self.rect.y -= (1 / 2) * self.d_y * (self.v_y ** 2)  # <- F = (m*v^2)/2
         self.v_y -= 1 if not self.on_ground else 0
         for tile in tiles:
             if self.rect.colliderect(tile.rect):
@@ -199,7 +210,7 @@ class Player:
                     self.is_alive = False
                     enemy.image = enemy.player_frame
                     self.rect.bottom = enemy.rect.bottom
-                    
+
         if self.v_y < 0:
             self.d_y = -1
         if self.rect.y > self.start_pos[1]*2:
@@ -216,19 +227,5 @@ class Player:
             if not self.facing_right:
                 self.image = pygame.transform.flip(self.image, True, False)
 
-
     def draw(self, screen):
-        # pygame.draw.rect(screen, 'white', self.rect)
         screen.blit(self.image, (self.rect.x, self.rect.y))
-        """fb_sf = pygame.Surface(self.size)
-        fb_sf = fb_sf.convert()
-        fb_sf.fill('red')
-        fb_rc = pygame.Rect(*self.size, self.rect.x, self.rect.y)
-        # fb_img = pygame.image.load('/Users/7artek/Documents/Politechnika Łódzka/SLFinal/resources/images/player.png')
-        # os.path.abspath('../../resources/images/player.png')
-        fb_img = pygame.image.load('./resources/images/player.png')
-        fb_img = pygame.transform.scale(fb_img, fb_rc.size)
-        fb_img = fb_img.convert_alpha()
-        fb_sf.blit(fb_img, fb_rc)
-        screen.blit(fb_sf, (self.rect.x, self.rect.y))"""
-

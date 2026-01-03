@@ -12,11 +12,19 @@ class Tile:
         self.tiles = []
         self.load_images()
         self.tiles = [pygame.transform.scale(t, self.size) for t in self.tiles]
-        self.image = self.tiles[0 if self.id == 'grass' else 1 if self.id == 'platform' else 24]
+        self.image = self.tiles[self.tileHlp(self.id)]
 
+    def tileHlp(self, id):
+        if id == 'grass':
+            return 0
+        if id == 'platform':
+            return 1
+        return 24
 
     def load_images(self):
-        tls = pygame.image.load('./resources/images/world_tileset.png').convert_alpha()
+        tls = pygame.image.load(
+            './resources/images/world_tileset.png'
+        ).convert_alpha()
         tw, th = tls.get_size()
         for y in range(0, th, TPS):
             for x in range(0, tw, TPS):
@@ -24,15 +32,12 @@ class Tile:
                 ct = tls.subsurface(rect)
                 self.tiles.append(ct)
 
-
     def update(self, world_x):
         self.world_x = world_x
         self.rect.x -= self.world_x
 
-
     def draw(self, screen):
         screen.blit(self.image, (self.rect.x, self.rect.y))
-        # DEPRECATED pygame.draw.rect(screen, 'darkgreen' if self.id == 'grass' else 'gray' if self.id == 'platform' else 'red', self.rect)
         """
         # DEBUG set corners variables
         bpx = self.rect.x

@@ -1,5 +1,5 @@
 chunks = [
-    [ # Initial (flat) chunk
+    [  # Initial (flat) chunk
         '...............',
         '...............',
         '...............',
@@ -12,7 +12,7 @@ chunks = [
         '...............',
         'XHHHHHHHHHHHHHX',
     ],
-    [ # Simple chunk with holes
+    [  # Simple chunk with holes
         '...............',
         '...............',
         '...............',
@@ -24,7 +24,7 @@ chunks = [
         '...............',
         'XHHHH..HHHHHHHX',
     ],
-    [ # Simple platforms chunk
+    [  # Simple platforms chunk
         '...............',
         '...............',
         '...............',
@@ -36,7 +36,7 @@ chunks = [
         '....XX.........',
         'XH...........HX',
     ],
-    [ # Wall chunk
+    [  # Wall chunk
         '...............',
         '...............',
         '...............',
@@ -49,7 +49,7 @@ chunks = [
         '...XXX.........',
         'XH.........HHHX',
     ],
-    [ # Enemy chunk
+    [  # Enemy chunk
         '...............',
         '...............',
         '...............',
@@ -62,7 +62,7 @@ chunks = [
         '.XX.XXXXXXX..X.',
         'X..........SS.X',
     ],
-    [ # Coin chunk
+    [  # Coin chunk
         '...............',
         '...............',
         '...............',
@@ -75,21 +75,21 @@ chunks = [
         '........C......',
         'XHHHHHHHHHHHHHX',
     ],
-    [ # Precision Islands (Max jump 2 tiles)
+    [  # Precision Islands (Max jump 2 tiles)
         '...............',
         '...............',
         '...............',
         '...............',
         '...............',
-        '......XXXX.....', # Platform 1
+        '......XXXX.....',
         '...............',
-        '..XXX..........', # Platform 2
+        '..XXX..........',
         '...............',
-        '.H.......XXX...', # Platform 3
-        'XX...........HX', # Floor is gone (Pit)
+        '.H.......XXX...',
+        'XX...........HX',
         'X.............X',
     ],
-    [ # Broken Bridge
+    [  # Broken Bridge
         '...............',
         '...............',
         '...............',
@@ -99,11 +99,11 @@ chunks = [
         '...............',
         '...............',
         '...............',
-        '......C........', 
-        'XHH..HHH..HHHHX', # Gaps are exactly 2 tiles wide
+        '......C........',
+        'XHH..HHH..HHHHX',
         'X.............X',
     ],
-    [ # Enemy in the Valley
+    [  # Enemy in the Valley
         '...............',
         '...............',
         '...............',
@@ -112,26 +112,26 @@ chunks = [
         '...............',
         '...............',
         '..............X',
-        '..............X', # High walls
-        '.X.....E.....XX', # Enemy trapped in the middle
-        'XXXSSXXXXX..XXX', # Small 2-tile gaps to enter/exit
+        '..............X',
+        '.X.....E.....XX',
+        'XXXSSXXXXX..XXX',
         'XH...........HX',
     ],
-    [ # Low Ceiling Jump
+    [  # Low Ceiling Jump
         '...............',
         '...............',
         '...............',
         '...............',
         '...............',
-        '......XXX......', # The Ceiling
-        '......XXX......', 
-        '...............', 
+        '......XXX......',
+        '......XXX......',
+        '...............',
         '......C.C.....X',
-        '.HH..HHHHH..HHX', # The gap is small, but the ceiling makes it hard
+        '.HH..HHHHH..HHX',
         'HX............X',
         'H.............X',
     ],
-    [ # Initial (flat) chunk
+    [  # Initial (flat) chunk
         '...............',
         '...............',
         '...............',
@@ -145,4 +145,3 @@ chunks = [
         'X..SSS..X..SSSX',
     ],
 ]
-

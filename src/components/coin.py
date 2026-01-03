@@ -32,7 +32,9 @@ class Coin:
         self.is_alive = False
         _frames = []
         for f in self.frames:
-            df = pygame.transform.scale(f, (self.size[0]*self.scale, self.size[1]*self.scale))
+            df = pygame.transform.scale(f,
+                                        (self.size[0]*self.scale,
+                                         self.size[1]*self.scale))
             self.scale += self.scale_speed
             _frames.append(df)
         self.frames = _frames
@@ -42,7 +44,7 @@ class Coin:
     def update(self, world_x):
         self.world_x = world_x
         self.rect.x -= self.world_x
-        
+
         self.frame_index += self.animation_speed
         self.image = self.frames[int(self.frame_index) % 12]
 
@@ -54,5 +56,7 @@ class Coin:
         if not self.is_alive:
             imgw, _ = self.image.get_size()
             plus_text = font.render("+10", False, 'black')
-            screen.blit(plus_text, (self.rect.x, self.rect.y - 40 - int(self.frame_index) * 5))
+            screen.blit(plus_text,
+                        (self.rect.x,
+                         self.rect.y - 40 - int(self.frame_index) * 5))
         screen.blit(self.image, (self.rect.x - imgw // 8, self.rect.y))

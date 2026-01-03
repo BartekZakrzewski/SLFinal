@@ -14,7 +14,7 @@ class Cloud:
         self.delay = delay
         self.delayed_frame = 0
         print(delay)
-        
+
         self.rect = pygame.Rect(*self.pos, *self.size)
 
         img = pygame.image.load('./resources/images/cloud.png').convert_alpha()
@@ -29,7 +29,8 @@ class Cloud:
             self.rect.y += self.d_y * self.v_y
         self.delayed_frame += 1
 
-        if self.delayed_frame % self.delay == 0 and abs(self.rect.y - self.pos[1]) // (self.size[1]//16) > 1:
+        if self.delayed_frame % self.delay == 0 and \
+           abs(self.rect.y - self.pos[1]) // (self.size[1]//16) > 1:
             self.d_y *= -1
 
         if self.rect.right <= 0:
