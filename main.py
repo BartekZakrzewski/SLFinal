@@ -10,9 +10,6 @@ def main():
     if username is not None and username != '':
         game = Game(username)
         score = game.run()
-        print(f"SCORE!!!: {score}")
-    else:
-        print('Cancelled the game')
 
     if score > 0 and username is not None and username != '':
         with open('./scores/scores.txt', 'a') as file:
