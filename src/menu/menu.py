@@ -35,7 +35,6 @@ def menu():
     readscores = readscores[:-1]
     if len(readscores):
         readscores.sort(key=lambda x: int(x[1]), reverse=True)
-    print(readscores)
     scores = readscores[:5]
 
     def on_play():
