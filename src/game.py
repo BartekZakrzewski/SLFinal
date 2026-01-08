@@ -107,6 +107,9 @@ class Game:
     def update_score(self):
         self.score = self.player.distance_x / 100\
             + (self.player.kills + self.player.coins) * self.player.v_x
+        for i, tile in enumerate(self.tiles):
+            if tile.rect.x + TILE_SIZE < 0:
+                del self.tiles[i]
 
     def draw_score(self):
         score = self.game_font.render(f"Score: {max(0, int(self.score))}",
