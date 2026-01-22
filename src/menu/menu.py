@@ -1,3 +1,9 @@
+"""
+Game menu module.
+
+This module handles the display of the main menu, score leaderboard,
+and username input using Tkinter.
+"""
 from tkinter import ttk
 import tkinter as tk
 from tkinter import messagebox
@@ -12,6 +18,12 @@ GREEN = '#4CAF50'
 
 
 def menu():
+    """
+    Display the main menu and get the username.
+
+    Returns:
+        str: The username entered by the player, or None if closed.
+    """
     root = tk.Tk()
     root.title("Super Python Bros - Menu")
     root.geometry("600x800")

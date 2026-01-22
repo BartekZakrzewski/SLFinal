@@ -1,8 +1,19 @@
+"""
+Main entry point for the game.
+
+This module initializes the game, handles user login via the menu,
+runs the game loop, and saves the score to a file.
+"""
 from src import Game
 from src.menu.menu import menu
 
 
 def main():
+    """
+    Run the main game loop.
+
+    Handles the user login, game initialization, execution, and score saving.
+    """
     username = ""
     score = 0
     while username == "":

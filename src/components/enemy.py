@@ -1,8 +1,27 @@
+"""
+Enemy component.
+
+This module provides the Enemy class, representing hostile entities
+that the player must avoid or defeat.
+"""
 import pygame
 
 
 class Enemy:
+    """
+    Enemy entity class.
+
+    Handles enemy movement, animation, and interaction with the world.
+    """
+
     def __init__(self, size, pos):
+        """
+        Initialize the enemy.
+
+        Args:
+            size (tuple): Width and height of the enemy.
+            pos (tuple): Initial (x, y) position.
+        """
         self.pos = [*pos]
         self.size = size
         self.rect = pygame.Rect(*self.pos, *self.size)
@@ -41,11 +60,22 @@ class Enemy:
         self.is_alive = True
 
     def kfHlp(self, __t, tiles):
+        """
+        Helper to construct kill animation frames.
+
+        Args:
+            __t (list): Subset of tiles.
+            tiles (list): Full list of tiles.
+
+        Returns:
+            list: List of frames for the kill animation.
+        """
         t1 = [tiles[10] for _ in range(2)]
         t3 = [tiles[0] for _ in range(5)]
         return t1 + __t[::-1] + t3
 
     def load_tiles(self):
+        """Load the sprite sheet and extract tiles."""
         tls = pygame.image.load('./resources/images/slime_purple.png')
         tw, th = tls.get_size()
         for y in range(0, th, 24):
@@ -55,12 +85,20 @@ class Enemy:
                 self.tiles.append(ct)
 
     def on_death(self):
+        """Trigger the death state and animation."""
         self.is_alive = False
         self.frames = self.kill_frames
         self.frame_index = self.kfi
         self.animation_speed = self.kas
 
     def update(self, world_x, tiles):
+        """
+        Update enemy position and logic.
+
+        Args:
+            world_x (int): World scroll offset.
+            tiles (list): List of world tiles for collision detection.
+        """
         pff = self.image == self.player_frame
         cf = False  # Collide flag
         self.world_x = world_x
@@ -103,6 +141,13 @@ class Enemy:
             self.image = pygame.transform.flip(self.image, True, False)
 
     def draw(self, screen, font):
+        """
+        Draw the enemy to the screen.
+
+        Args:
+            screen (pygame.Surface): Screen to draw on.
+            font (pygame.font.Font): Font for score popup on death.
+        """
         if not self.is_alive:
             plus_text = font.render("+10", False, 'black')
             screen.blit(plus_text,

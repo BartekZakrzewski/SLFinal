@@ -1,9 +1,29 @@
+"""
+Cloud component.
+
+This module provides the Cloud class which represents decorative cloud entities
+in the game background.
+"""
 import pygame
 from src.settings import SCREEN_SIZE
 
 
 class Cloud:
+    """
+    Background cloud entity.
+
+    Moves across the screen to create a parallax effect.
+    """
+
     def __init__(self, size, pos, delay):
+        """
+        Initialize the cloud.
+
+        Args:
+            size (tuple): Width and height of the cloud.
+            pos (tuple): Initial (x, y) position.
+            delay (int): Delay factor for vertical movement/floating.
+        """
         self.size = size
         self.pos = pos
 
@@ -21,6 +41,12 @@ class Cloud:
         self.image = pygame.transform.scale(img, self.size)
 
     def update(self, world_x):
+        """
+        Update the cloud's position.
+
+        Args:
+            world_x (int): The current horizontal scroll of the world.
+        """
         self.world_x = world_x
         self.rect.x -= self.v_x
         self.rect.x -= self.world_x // 2
@@ -37,4 +63,10 @@ class Cloud:
             self.rect.left = SCREEN_SIZE[0]
 
     def draw(self, screen):
+        """
+        Draw the cloud on the screen.
+
+        Args:
+            screen (pygame.Surface): The game screen surface.
+        """
         screen.blit(self.image, (self.rect.x, self.rect.y))

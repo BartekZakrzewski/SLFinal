@@ -1,3 +1,9 @@
+"""
+Main game module.
+
+This module contains the Game class which manages the main game loop,
+rendering, physics, and entity management.
+"""
 import pygame
 import random as ran
 from src.components.player import Player
@@ -11,7 +17,19 @@ from src.settings import SCREEN_SIZE, TILE_SIZE, TICK
 
 
 class Game:
+    """
+    The main Game class.
+
+    Manages the game state, level generation, and main loop.
+    """
+
     def __init__(self, username):
+        """
+        Initialize the game.
+
+        Args:
+            username (str): The name of the player.
+        """
         pygame.init()
         pygame.font.init()
         pygame.mixer.init()
@@ -43,9 +61,16 @@ class Game:
         self.earned = 0
 
     def init_player(self):
+        """Initialize the player entity."""
         self.player = Player(self.screen)
 
     def generate_chunk(self, seed):
+        """
+        Generate a level chunk based on a seed index.
+
+        Args:
+            seed (int): The index of the chunk definition in chunks list.
+        """
         offset_w = 0
         if len(self.tiles) > 0:
             for tile in self.tiles:
@@ -86,6 +111,7 @@ class Game:
                     offset_w = max(offset_w, self.tiles[-1].rect.right)
 
     def init_level(self):
+        """Initialize the starting level state."""
         self.tiles = []
         cloud1 = Cloud((3 * TILE_SIZE, 2 * TILE_SIZE),
                        ((SCREEN_SIZE[0] - TILE_SIZE) // 2,
@@ -101,10 +127,12 @@ class Game:
         self.generate_chunk(5)
 
     def update_chunks(self):
+        """Check if new chunks need to be generated based on player position."""
         if self.tiles[-1].rect.right < self.player.distance_x*0.5:
             self.generate_chunk(ran.randint(0, len(chunks) - 1))
 
     def update_score(self):
+        """Calculate and update the player's score."""
         self.score = self.player.distance_x / 100\
             + (self.player.kills + self.player.coins) * self.player.v_x
         for i, tile in enumerate(self.tiles):
@@ -112,11 +140,23 @@ class Game:
                 del self.tiles[i]
 
     def draw_score(self):
+        """Draw the score on the screen."""
         score = self.game_font.render(f"Score: {max(0, int(self.score))}",
                                       False, 'black')
         self.screen.blit(score, (0, 0))
 
     def animate_dead(self, ani, ans, scaled_frames):
+        """
+        Animate the player's death sequence.
+
+        Args:
+            ani (float): Animation index.
+            ans (float): Animation speed.
+            scaled_frames (list): List of scaled image frames for animation.
+
+        Returns:
+            tuple: (ans, ani) updated animation state.
+        """
         # End text
         death_text = self.dripping_font.render('YOU DIED!', True, 'red')
         dtw, dth = death_text.get_size()
@@ -148,6 +188,7 @@ class Game:
         return ans, ani
 
     def update(self):
+        """Update game entities and handle logic for one frame."""
         keys = pygame.key.get_pressed()
 
         for cloud in self.clouds:
@@ -191,6 +232,12 @@ class Game:
         self.draw_score()
 
     def run(self):
+        """
+        Run the main game loop.
+
+        Returns:
+            int: Final score of the game session.
+        """
         self.running = True
         self.font = pygame.sysfont.SysFont('Arial', 30)
         self.dripping_font = pygame.font.Font(

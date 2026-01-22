@@ -1,8 +1,8 @@
 """
-Global settings
+Global settings and constants.
 
-Include constants for different components
-to avoid repetition
+This module contains configuration constants for screen dimensions,
+game physics, entity properties, and other gameplay parameters.
 """
 
 """SCREEN"""

@@ -1,8 +1,27 @@
+"""
+Coin component.
+
+This module provides the Coin class, representing collectible items
+that increase the player's score.
+"""
 import pygame
 
 
 class Coin:
+    """
+    Collectible coin entity.
+
+    Animated and interactable, gives points when collected.
+    """
+
     def __init__(self, size, pos):
+        """
+        Initialize the coin.
+
+        Args:
+            size (tuple): Size of the coin (width, height).
+            pos (tuple): Position of the coin (x, y).
+        """
         self.size = size
         self.pos = pos
 
@@ -20,6 +39,7 @@ class Coin:
         self.is_alive = True
 
     def load_images(self):
+        """Load coin animation frames from sprite sheet."""
         tls = pygame.image.load('./resources/images/coin.png').convert_alpha()
         tw, th = tls.get_size()
         for y in range(0, th, 16):
@@ -29,6 +49,7 @@ class Coin:
                 self.frames.append(pygame.transform.scale(ct, self.size))
 
     def on_death(self):
+        """Handle the coin collection event (death)."""
         self.is_alive = False
         _frames = []
         for f in self.frames:
@@ -42,6 +63,12 @@ class Coin:
         self.animation_speed = 0.25
 
     def update(self, world_x):
+        """
+        Update the coin state.
+
+        Args:
+            world_x (int): World scroll offset.
+        """
         self.world_x = world_x
         self.rect.x -= self.world_x
 
@@ -52,6 +79,13 @@ class Coin:
             self.rect.y -= self.v_y
 
     def draw(self, screen, font):
+        """
+        Draw the coin and point popup.
+
+        Args:
+            screen (pygame.Surface): Screen to draw on.
+            font (pygame.font.Font): Font for the score popup.
+        """
         imgw = 0
         if not self.is_alive:
             imgw, _ = self.image.get_size()

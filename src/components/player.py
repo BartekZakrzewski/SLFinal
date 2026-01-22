@@ -1,3 +1,9 @@
+"""
+Player component.
+
+This module provides the Player class, which handles user input, physics,
+movement, and collision detection for the main character.
+"""
 import pygame
 from src.settings import (PLAYER_SIZE, PLAYER_POS,
                           V_X, V_Y, PLAYER_ANIMATION_SPEED, PTS, SCREEN_SIZE,
@@ -5,7 +11,19 @@ from src.settings import (PLAYER_SIZE, PLAYER_POS,
 
 
 class Player:
+    """
+    The main player entity.
+
+    Handles movement, physics interactions, and rendering.
+    """
+
     def __init__(self, screen):
+        """
+        Initialize the player.
+
+        Args:
+            screen (pygame.Surface): The game screen surface.
+        """
         # Init variables
         self.screen = screen
         self.size = PLAYER_SIZE
@@ -55,10 +73,21 @@ class Player:
         self.facing_right = True
 
     def runFramesHlp(self, tiles, size):
+        """
+        Helper to create scaled run frames.
+
+        Args:
+            tiles (list): List of source tiles.
+            size (tuple): Target size.
+
+        Returns:
+            list: List of scaled frames.
+        """
         return [pygame.transform.scale(tiles[0], size),
                 pygame.transform.scale(tiles[1], size)]
 
     def load_tiles(self):
+        """Load player sprite sheet and extract tiles."""
         tileset = pygame.image.load('./resources/images/knight.png')
         tw, th = tileset.get_size()
         for y in range(0, th, PTS):
@@ -68,6 +97,16 @@ class Player:
                 self.tiles.append(ct)
 
     def update(self, keys, tiles, enemies, coins, spikes):
+        """
+        Update player state, handle input, movement, and collisions.
+
+        Args:
+            keys (list): State of keyboard keys.
+            tiles (list): List of world tiles.
+            enemies (list): List of enemy entities.
+            coins (list): List of coin entities.
+            spikes (list): List of spike entities.
+        """
         # Movement
         prev = self.rect.x
         self.moving = False
@@ -168,6 +207,14 @@ class Player:
         self.distance_x = max(self.distance_x, self.position_x)
 
     def jump(self, tiles, enemies, spikes):
+        """
+        Handle jump physics and vertical collisions.
+
+        Args:
+            tiles (list): List of world tiles.
+            enemies (list): List of enemies.
+            spikes (list): List of spikes.
+        """
         prev = self.rect.y
         dg = False
         self.rect.y -= (1 / 2) * self.d_y * (self.v_y ** 2)  # <- F = (m*v^2)/2
@@ -228,4 +275,10 @@ class Player:
                 self.image = pygame.transform.flip(self.image, True, False)
 
     def draw(self, screen):
+        """
+        Draw the player on the screen.
+
+        Args:
+            screen (pygame.Surface): Screen to draw on.
+        """
         screen.blit(self.image, (self.rect.x, self.rect.y))

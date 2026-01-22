@@ -1,3 +1,15 @@
+"""
+Level chunks configuration.
+
+This module defines the various level chunks used to procedurally generate the game world.
+Each chunk is represented as a list of strings, where characters correspond to different game entities:
+- '.': Empty space
+- 'X': Terrain block
+- 'H': Grass block
+- 'E': Enemy
+- 'C': Coin
+- 'S': Spikes
+"""
 chunks = [
     [  # Initial (flat) chunk
         '...............',
